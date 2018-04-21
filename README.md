@@ -2,7 +2,7 @@
 
 scala-jbdc使用Scala语言对jdbc的API做一层封装，提供更易用的API
 
-## Select
+## 查询记录
 
 查询多条记录
 ```scala
