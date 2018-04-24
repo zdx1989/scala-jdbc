@@ -39,7 +39,25 @@ val insertUsers: ConnectionIO[Seq[Int]] = for {
 } yield Seq(i, j)
 insertUsers.transact(conn)
 ```
+## 非类型安全操作（方法调用会抛出运行异常）
 
+非类型安全查询和更新操作
+```scala
+val s1 = Student(1, "ygy", 100)
+val res: Int = sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update.runUnsafe(conn)
+val student: Student = sql"SELECT * FROM student".query[Student].unique.runUnsafe(conn)
+```
+
+非类型安全事务操作
+```scala
+val s1 = Student(1, "zdx", 80)
+val s2 = Student(2, "ygy", 100)
+val insertUsers: ConnectionIO[Seq[Int]] = for {
+    i <- sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update
+    j <- sql"INSERT INTO student (name, score) VALUES (${s2.name}, ${s2.score})".update
+} yield Seq(i, j)
+val res: Seq[Int] = insertUsers.transactUnsafe(conn)
+```
 ## 特别鸣谢
 [doobie](https://github.com/tpolecat/doobie)
 [scala-jdbc](https://github.com/takezoe/scala-jdbc)

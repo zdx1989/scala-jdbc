@@ -22,6 +22,9 @@ trait ConnectionIO[A] {
     catch { case e: Exception => Left(e) }
     finally conn.close()
 
+  def runUnsafe(conn: Connection): A =
+    run(conn).fold(e => throw e, identity)
+
   def transact(conn: Connection): Either[Exception, A] = {
     conn.setAutoCommit(false)
     try Right(func(conn))
@@ -32,8 +35,8 @@ trait ConnectionIO[A] {
     } finally conn.close()
   }
 
-
-
+  def transactUnsafe(conn: Connection): A =
+    transact(conn).fold(e => throw e, identity)
 
 }
 

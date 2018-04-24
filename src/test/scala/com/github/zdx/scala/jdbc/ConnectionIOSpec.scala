@@ -52,9 +52,10 @@ class ConnectionIOSpec extends FunSpec with Matchers with BeforeAndAfter {
 
     it("should return Student") {
       val s1 = Student(1, "ygy", 100)
-      sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update.run(conn)
-      val student = sql"SELECT * FROM student".query[Student].unique.run(conn)
-      student should be (Right(s1))
+      val res: Int = sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update.runUnsafe(conn)
+      val student = sql"SELECT * FROM student".query[Student].unique
+      student.run(conn) should be (Right(s1))
+      student.runUnsafe(conn) should be (s1)
       val tuple: Either[Exception, (Long, String, Int)] =
         sql"SELECT * FROM student".query[(Long, String, Int)].unique.run(conn)
       tuple should be (Right((1, "ygy", 100)))
@@ -68,6 +69,7 @@ class ConnectionIOSpec extends FunSpec with Matchers with BeforeAndAfter {
         j <- sql"INSERT INTO student (name, score) VALUES (${s2.name}, ${s2.score})".update
       } yield Seq(i, j)
       insertUsers.transact(conn) should be (Right(Seq(1, 1)))
+      insertUsers.transactUnsafe(conn) should be (Seq(1, 1))
     }
   }
 
