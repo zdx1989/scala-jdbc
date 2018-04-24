@@ -44,7 +44,8 @@ insertUsers.transact(conn)
 非类型安全查询和更新操作
 ```scala
 val s1 = Student(1, "ygy", 100)
-val res: Int = sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update.runUnsafe(conn)
+val res: Int = sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})"
+    .update.runUnsafe(conn)
 val student: Student = sql"SELECT * FROM student".query[Student].unique.runUnsafe(conn)
 ```
 
