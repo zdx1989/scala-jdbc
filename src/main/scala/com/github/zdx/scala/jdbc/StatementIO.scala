@@ -9,6 +9,8 @@ import IOUtils._
   */
 case class StatementIO(sql: String, params: Any*) {
 
+  import StatementIO._
+
   def query[A](implicit mapper: RawFieldMapper[A]): ConnectionIO[Seq[A]] = ConnectionIO { conn =>
     using(conn.prepareStatement(sql)) { stmt =>
       params.zipWithIndex.foreach {
@@ -34,7 +36,16 @@ case class StatementIO(sql: String, params: Any*) {
     }
   }
 
+}
 
+object StatementIO {
+
+  implicit class SqlStringInterpolation(val sc: StringContext) extends AnyVal {
+    def sql(args: Any*): StatementIO = {
+      val sql = sc.parts.mkString("?")
+      StatementIO(sql, args:_*)
+    }
+  }
 
   def set(stmt: PreparedStatement, index: Int, value: Any): Unit = value match {
     case v: Int => stmt.setInt(index, v)
@@ -49,15 +60,5 @@ case class StatementIO(sql: String, params: Any*) {
     case v: Byte => stmt.setByte(index, v)
     case v: Boolean => stmt.setBoolean(index, v)
     case _ => throw new UnsupportedOperationException(s"Unsupported type: ${value.getClass.getName}")
-  }
-}
-
-object StatementIO {
-
-  implicit class SqlStringInterpolation(val sc: StringContext) extends AnyVal {
-    def sql(args: Any*): StatementIO = {
-      val sql = sc.parts.mkString("?")
-      StatementIO(sql, args:_*)
-    }
   }
 }

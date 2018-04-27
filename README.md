@@ -23,9 +23,20 @@ val tuple: Either[Exception, (Long, String, Int)] =
 
 ## 更新记录
 
+单次更新记录
 ```scala
 val s1 = Student(1, "ygy", 100)
 sql"INSERT INTO student (name, score) VALUES (${s1.name}, ${s1.score})".update.run(conn)
+```
+
+批量更新记录
+```scala
+val s1 = Student(1, "zdx", 80)
+val s2 = Student(2, "ygy", 100)
+def insertStudent(s: List[Student]): ConnectionIO[Seq[Int]] = {
+    val sql = s"INSERT INTO student (id, name, score) VALUES (?, ?, ?)"
+    Update[Student](sql).updateMany(s)
+}
 ```
 
 ## 事务

@@ -71,7 +71,7 @@ object Mapper {
       }
     }
 
-  implicit def generic[A, R](implicit
+  implicit def genericMapper[A, R](implicit
                              gen: Generic.Aux[A, R],
                              rMapper: RawFieldMapper[R]): RawFieldMapper[A] =
     rawFieldMapper { (rs, indexes) =>
