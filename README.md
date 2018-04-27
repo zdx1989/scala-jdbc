@@ -37,6 +37,7 @@ def insertStudent(s: List[Student]): ConnectionIO[Seq[Int]] = {
     val sql = s"INSERT INTO student (id, name, score) VALUES (?, ?, ?)"
     Update[Student](sql).updateMany(s)
 }
+insertStudent(List(s1, s2))
 ```
 
 ## 事务
