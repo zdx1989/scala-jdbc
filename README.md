@@ -1,6 +1,6 @@
 # scala-jdbc
 
-scala-jbdc使用Scala语言对jdbc的API做一层封装，提供更易用的API
+scala-jdbc使用Scala语言对jdbc的API做一层封装，提供更易用的API
 
 ## 查询记录
 
